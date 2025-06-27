@@ -178,6 +178,23 @@ button:focus-visible {
   display: flex;
   gap: 8px;
 }
+.kanban-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #23272f;
+  padding: 16px 24px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+.kanban-title {
+  margin: 0;
+  font-size: 2em;
+}
+.kanban-header-actions {
+  display: flex;
+  gap: 12px;
+}
 
 @media (prefers-color-scheme: light) {
   :root {

@@ -12,6 +12,7 @@ function App() {
   const [columns, setColumns] = useState(initialColumns)
   const [taskInput, setTaskInput] = useState('')
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [firstName, setFirstName] = useState('User')
 
   const addTask = (e) => {
     e.preventDefault()
@@ -51,16 +52,33 @@ function App() {
     alert('Board saved!')
   }
 
+  // Pass a callback to Login to set the user's first name
   if (!isLoggedIn) {
-    return <Login onLogin={() => setIsLoggedIn(true)} />
+    return (
+      <Login
+        onLogin={(name) => {
+          setIsLoggedIn(true)
+          setFirstName(name || 'User')
+        }}
+      />
+    )
   }
 
-  const handleLogout = () => setIsLoggedIn(false)
+  const handleLogout = () => {
+    setIsLoggedIn(false)
+    setFirstName('User')
+  }
 
   return (
     <div>
-      <h1>Project Kanban Board</h1>
-      <button className="snippet-btn" onClick={handleLogout} style={{marginBottom: 16}}>Logout</button>
+      <header className="kanban-header">
+        <h1 className="kanban-title">Project Kanban Board</h1>
+        <div className="kanban-header-actions">
+          <button className="snippet-btn" onClick={saveBoard}>Save Board</button>
+          <button className="snippet-btn" onClick={handleLogout}>Logout</button>
+        </div>
+      </header>
+      <div className="hello-user">Hello, {firstName}</div>
       <form onSubmit={addTask} className="snippet-form">
         <input
           value={taskInput}
@@ -70,7 +88,6 @@ function App() {
         />
         <button type="submit" className="snippet-btn">Add Task</button>
       </form>
-      <button className="snippet-btn" onClick={saveBoard} style={{marginBottom: 16, marginLeft: 8}}>Save Board</button>
       <div className="kanban-board">
         {Object.entries(columns).map(([colKey, col]) => (
           <div key={colKey} className="kanban-column">
