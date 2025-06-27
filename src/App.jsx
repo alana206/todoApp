@@ -42,13 +42,25 @@ function App() {
     })
   }
 
+  const saveBoard = async () => {
+    await fetch('http://localhost:4000/api/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(columns)
+    })
+    alert('Board saved!')
+  }
+
   if (!isLoggedIn) {
     return <Login onLogin={() => setIsLoggedIn(true)} />
   }
 
+  const handleLogout = () => setIsLoggedIn(false)
+
   return (
     <div>
       <h1>Project Kanban Board</h1>
+      <button className="snippet-btn" onClick={handleLogout} style={{marginBottom: 16}}>Logout</button>
       <form onSubmit={addTask} className="snippet-form">
         <input
           value={taskInput}
@@ -58,6 +70,7 @@ function App() {
         />
         <button type="submit" className="snippet-btn">Add Task</button>
       </form>
+      <button className="snippet-btn" onClick={saveBoard} style={{marginBottom: 16, marginLeft: 8}}>Save Board</button>
       <div className="kanban-board">
         {Object.entries(columns).map(([colKey, col]) => (
           <div key={colKey} className="kanban-column">

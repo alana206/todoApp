@@ -1,0 +1,5 @@
+{
+  "todo": { "name": "To Do", "items": [] },
+  "inprogress": { "name": "In Progress", "items": [] },
+  "done": { "name": "Done", "items": [] }
+}
