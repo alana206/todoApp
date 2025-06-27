@@ -1,34 +1,101 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import Login from './Login'
+
+const initialColumns = {
+  todo: { name: "To Do", items: [] },
+  inprogress: { name: "In Progress", items: [] },
+  done: { name: "Done", items: [] }
+}
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [columns, setColumns] = useState(initialColumns)
+  const [taskInput, setTaskInput] = useState('')
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+
+  const addTask = (e) => {
+    e.preventDefault()
+    if (!taskInput.trim()) return
+    setColumns({
+      ...columns,
+      todo: {
+        ...columns.todo,
+        items: [...columns.todo.items, { text: taskInput }]
+      }
+    })
+    setTaskInput('')
+  }
+
+  // Move task to another column
+  const moveTask = (from, to, idx) => {
+    const task = columns[from].items[idx]
+    setColumns({
+      ...columns,
+      [from]: {
+        ...columns[from],
+        items: columns[from].items.filter((_, i) => i !== idx)
+      },
+      [to]: {
+        ...columns[to],
+        items: [...columns[to].items, task]
+      }
+    })
+  }
+
+  if (!isLoggedIn) {
+    return <Login onLogin={() => setIsLoggedIn(true)} />
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div>
+      <h1>Project Kanban Board</h1>
+      <form onSubmit={addTask} className="snippet-form">
+        <input
+          value={taskInput}
+          onChange={e => setTaskInput(e.target.value)}
+          placeholder="Add a new task"
+          className="snippet-input"
+        />
+        <button type="submit" className="snippet-btn">Add Task</button>
+      </form>
+      <div className="kanban-board">
+        {Object.entries(columns).map(([colKey, col]) => (
+          <div key={colKey} className="kanban-column">
+            <h2>{col.name}</h2>
+            <ul className="kanban-list">
+              {col.items.map((item, idx) => (
+                <li key={idx} className="kanban-card">
+                  {item.text}
+                  <div className="kanban-actions">
+                    {colKey !== 'todo' && (
+                      <button
+                        className="snippet-btn"
+                        type="button"
+                        onClick={() => moveTask(colKey, 'todo', idx)}
+                      >To Do</button>
+                    )}
+                    {colKey !== 'inprogress' && (
+                      <button
+                        className="snippet-btn"
+                        type="button"
+                        onClick={() => moveTask(colKey, 'inprogress', idx)}
+                      >In Progress</button>
+                    )}
+                    {colKey !== 'done' && (
+                      <button
+                        className="snippet-btn"
+                        type="button"
+                        onClick={() => moveTask(colKey, 'done', idx)}
+                      >Done</button>
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </div>
   )
 }
 
