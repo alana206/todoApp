@@ -1,5 +1,8 @@
 {
-  "todo": { "name": "To Do", "items": [] },
-  "inprogress": { "name": "In Progress", "items": [{ "text": "taskl1" }] },
-  "done": { "name": "Done", "items": [] }
+  "todo": { "name": "To Do", "items": [{ "text": "three" }, { "text": "5" }] },
+  "inprogress": {
+    "name": "In Progress",
+    "items": [{ "text": "one tast" }, { "text": "4" }]
+  },
+  "done": { "name": "Done", "items": [{ "text": "two" }] }
 }
