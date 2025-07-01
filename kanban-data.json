@@ -1,5 +1,5 @@
 {
   "todo": { "name": "To Do", "items": [] },
-  "inprogress": { "name": "In Progress", "items": [] },
+  "inprogress": { "name": "In Progress", "items": [{ "text": "taskl1" }] },
   "done": { "name": "Done", "items": [] }
 }

@@ -5,6 +5,7 @@ import fs from 'fs-extra'
 const app = express()
 const PORT = 4000
 const DATA_FILE = './kanban-data.json'
+const USERS_FILE = './users.json'
 
 app.use(cors())
 app.use(express.json())
@@ -56,6 +57,40 @@ app.post('/api/save', async (req, res) => {
   await saveBoard(data)
   columns = data
   res.json({ success: true })
+})
+
+// Helper to load users
+const loadUsers = async () => {
+  if (await fs.pathExists(USERS_FILE)) {
+    return fs.readJson(USERS_FILE)
+  }
+  await fs.writeJson(USERS_FILE, [])
+  return []
+}
+
+// Helper to save users
+const saveUsers = (users) => fs.writeJson(USERS_FILE, users)
+
+// Register endpoint
+app.post('/api/register', async (req, res) => {
+  const { username, password } = req.body
+  if (!username || !password) return res.status(400).json({ error: 'Missing fields' })
+  const users = await loadUsers()
+  if (users.find(u => u.username === username)) {
+    return res.status(400).json({ error: 'User exists' })
+  }
+  users.push({ username, password })
+  await saveUsers(users)
+  res.json({ success: true })
+})
+
+// Login endpoint
+app.post('/api/login', async (req, res) => {
+  const { username, password } = req.body
+  const users = await loadUsers()
+  const user = users.find(u => u.username === username && u.password === password)
+  if (!user) return res.status(401).json({ error: 'Invalid credentials' })
+  res.json({ success: true, firstName: username })
 })
 
 app.listen(PORT, () => {

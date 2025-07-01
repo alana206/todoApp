@@ -1,33 +1,42 @@
 import { useState } from 'react'
-import { signInWithPopup } from 'firebase/auth'
-import { auth, provider } from './firebase'
 
 export default function Login({ onLogin }) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [isCreating, setIsCreating] = useState(false)
+  const [error, setError] = useState('')
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!isCreating && username === 'user' && password === 'pass') {
-      onLogin('User')
-    } else if (isCreating) {
-      alert('Account created! (Demo only)')
-      setIsCreating(false)
+    setError('')
+    if (isCreating) {
+      // Register
+      const res = await fetch('http://localhost:4000/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      })
+      if (res.ok) {
+        alert('Account created! Please log in.')
+        setIsCreating(false)
+      } else {
+        const data = await res.json()
+        setError(data.error || 'Registration failed')
+      }
     } else {
-      alert('Invalid credentials')
-    }
-  }
-
-  const handleGoogleLogin = async () => {
-    try {
-      const result = await signInWithPopup(auth, provider)
-      const displayName = result.user.displayName || 'User'
-      const firstName = displayName.split(' ')[0]
-      onLogin(firstName)
-    } catch (err) {
-      alert('Google login failed')
-      console.error(err)
+      // Login
+      const res = await fetch('http://localhost:4000/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      })
+      if (res.ok) {
+        const data = await res.json()
+        onLogin(data.firstName)
+      } else {
+        const data = await res.json()
+        setError(data.error || 'Login failed')
+      }
     }
   }
 
@@ -49,13 +58,7 @@ export default function Login({ onLogin }) {
         />
         <button type="submit">{isCreating ? 'Create Account' : 'Login'}</button>
       </form>
-      <button
-        type="button"
-        onClick={handleGoogleLogin}
-        className="snippet-btn"
-      >
-        Login with Google
-      </button>
+      {error && <div style={{ color: 'red', marginTop: 8 }}>{error}</div>}
       <div style={{ marginTop: 10 }}>
         {isCreating ? (
           <span>
