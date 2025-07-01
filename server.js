@@ -1,9 +1,11 @@
 import express from 'express'
 import cors from 'cors'
 import fs from 'fs-extra'
+import path from 'path'
+import { fileURLToPath } from 'url'
 
 const app = express()
-const PORT = 4000
+const PORT = process.env.PORT || 4000
 const DATA_FILE = './kanban-data.json'
 const USERS_FILE = './users.json'
 
@@ -91,6 +93,14 @@ app.post('/api/login', async (req, res) => {
   const user = users.find(u => u.username === username && u.password === password)
   if (!user) return res.status(401).json({ error: 'Invalid credentials' })
   res.json({ success: true, firstName: username })
+})
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
+// Serve static frontend
+app.use(express.static(path.join(__dirname, 'dist')))
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'))
 })
 
 app.listen(PORT, () => {
