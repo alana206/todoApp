@@ -5,7 +5,8 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 
 const app = express()
-const PORT = process.env.PORT || 4000
+// eslint-disable-next-line no-undef
+const PORT = process.env.PORT || 8000;
 const DATA_FILE = './kanban-data.json'
 const USERS_FILE = './users.json'
 
