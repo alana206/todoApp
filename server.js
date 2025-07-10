@@ -86,21 +86,18 @@ app.post('/api/register', async (req, res) => {
   }
 })
 
-// Helper function to load users from USERS_FILE
-const loadUsers = async () => {
-  if (await fs.pathExists(USERS_FILE)) {
-    return fs.readJson(USERS_FILE)
-  }
-  return []
-}
-
 // Login endpoint
 app.post('/api/login', async (req, res) => {
   const { username, password } = req.body
-  const users = await loadUsers()
-  const user = users.find(u => u.username === username && u.password === password)
-  if (!user) return res.status(401).json({ error: 'Invalid credentials' })
-  res.json({ success: true, firstName: username })
+  try {
+    const result = await pool.query('SELECT * FROM users WHERE username = $1 AND password = $2', [username, password])
+    if (result.rows.length === 0) {
+      return res.status(401).json({ error: 'Invalid credentials' })
+    }
+    res.json({ success: true, firstName: result.rows[0].username })
+  } catch (err) {
+    res.status(500).json({ error: 'Database error' })
+  }
 })
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
