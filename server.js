@@ -3,6 +3,7 @@ import cors from 'cors'
 import fs from 'fs-extra'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { Pool } from 'pg'
 
 const app = express()
 // eslint-disable-next-line no-undef
@@ -62,30 +63,36 @@ app.post('/api/save', async (req, res) => {
   res.json({ success: true })
 })
 
-// Helper to load users
-const loadUsers = async () => {
-  if (await fs.pathExists(USERS_FILE)) {
-    return fs.readJson(USERS_FILE)
-  }
-  await fs.writeJson(USERS_FILE, [])
-  return []
-}
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+})
 
-// Helper to save users
-const saveUsers = (users) => fs.writeJson(USERS_FILE, users)
+// Example: Query users
+app.get('/api/users', async (req, res) => {
+  const result = await pool.query('SELECT * FROM users')
+  res.json(result.rows)
+})
 
 // Register endpoint
 app.post('/api/register', async (req, res) => {
   const { username, password } = req.body
   if (!username || !password) return res.status(400).json({ error: 'Missing fields' })
-  const users = await loadUsers()
-  if (users.find(u => u.username === username)) {
-    return res.status(400).json({ error: 'User exists' })
+  try {
+    await pool.query('INSERT INTO users (username, password) VALUES ($1, $2)', [username, password])
+    res.json({ success: true })
+  } catch (err) {
+    res.status(400).json({ error: 'User exists or DB error' })
   }
-  users.push({ username, password })
-  await saveUsers(users)
-  res.json({ success: true })
 })
+
+// Helper function to load users from USERS_FILE
+const loadUsers = async () => {
+  if (await fs.pathExists(USERS_FILE)) {
+    return fs.readJson(USERS_FILE)
+  }
+  return []
+}
 
 // Login endpoint
 app.post('/api/login', async (req, res) => {
