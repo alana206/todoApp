@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import './App.css'
 import Login from './Login'
+import { Checkbox, FormControlLabel } from '@mui/material'
 
 const setStateForColums = {
   todo: { name: "To Do", items: [] },
@@ -12,6 +13,7 @@ function App() {
   const [columns, setColumns] = useState(setStateForColums)
   const [taskInput, setTaskInput] = useState('')
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  
   const [firstName, setFirstName] = useState('User')
 
   const addTask = (e) => {
@@ -92,7 +94,20 @@ function App() {
         <div className="kanban-header-actions">
           <button className="snippet-btn" onClick={saveBoard}>Save Board</button>
           <button className="snippet-btn" onClick={handleLogout}>Logout</button>
-          <button className="snippet-btn" onClick={markAllDone}>Mark All Done</button>
+          <FormControlLabel
+            control={
+              <Checkbox
+                onChange={e => {
+                  if (e.target.checked) {
+                    markAllDone();
+                    e.target.checked = false;
+                  }
+                }}
+                color="primary"
+              />
+            }
+            label="Mark All Done"
+          />
         </div>
       </header>
       <div className="hello-user">Hello, {firstName}</div>

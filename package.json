@@ -6,13 +6,16 @@
   "scripts": {
     "start-backend": "node server.js",
     "start-frontend": "vite",
-    "prod":"concurrently \"npm run start-backend\" \"npm run start-frontend\"",
+    "prod": "concurrently \"npm run start-backend\" \"npm run start-frontend\"",
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/material": "^7.2.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "fs-extra": "^11.3.0",
