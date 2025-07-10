@@ -1,1 +1,1 @@
-{"todo":{"name":"To Do","items":[{"text":"4"}]},"inprogress":{"name":"In Progress","items":[{"text":"3"}]},"done":{"name":"Done","items":[{"text":"1"},{"text":"2"}]}}
+{"todo":{"name":"To Do","items":[]},"inprogress":{"name":"In Progress","items":[]},"done":{"name":"Done","items":[]}}
