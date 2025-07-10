@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
-// const apiUrl = import.meta.env.VITE_API_URL
-const apiUrl = 'http://localhost:8000'
+const apiUrl = import.meta.env.VITE_API_URL
+// const apiUrl = 'http://localhost:8000'
 
 export default function Login({ onLogin }) {
   const [username, setUsername] = useState('')
@@ -14,7 +14,7 @@ export default function Login({ onLogin }) {
     setError('')
     if (isCreating) {
       // Register
-      const res = await fetch('http://localhost:8000/api/register', {
+      const res = await fetch(`${apiUrl}/api/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
