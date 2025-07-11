@@ -21,7 +21,8 @@
     "fs-extra": "^11.3.0",
     "pg": "^8.16.3",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "render": "^0.1.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.29.0",
